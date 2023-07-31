@@ -9,7 +9,7 @@ import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../node_modules/@openzeppelin/contracts/utils/Strings.sol";
 import "../node_modules/@openzeppelin/contracts/utils/Base64.sol";
 
-contract MyNFT is ERC721 {
+contract CoffeeeNFT is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 

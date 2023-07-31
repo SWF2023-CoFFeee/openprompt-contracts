@@ -1,27 +1,47 @@
-import { ethers } from "hardhat";
+import hre, { ethers } from 'hardhat';
+import CoffeeeArtifact from '../artifacts/contracts/CoffeeeNFT.sol/CoffeeeNFT.json';
+import { getGasOption } from './utils/gas';
+import * as fs from 'fs';
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+const [admin] = await hre.ethers.getSigners();
 
-  const lockedAmount = ethers.parseEther("0.001");
+const chainId = hre.network.config.chainId || 0;
 
-  const lock = await ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
+const factory = await ethers.getContractFactory(
+    CoffeeeArtifact.contractName,
+);
 
-  await lock.waitForDeployment();
+const contract = await factory.deploy(
+    'Coffeee',
+    'CFEE',
+    getGasOption(chainId),
+);
+  const receipt = await contract.deploymentTransaction();
+  const address = await contract.getAddress();
 
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+const deployedContract = {
+    address: address,
+    blockNumber: receipt?.blockNumber,
+    chainId: hre.network.config.chainId,
+    abi: CoffeeeArtifact.abi,
+};
+
+const filename = __dirname + `/coffeee.deployed.json`;
+
+const deployedContractJson = JSON.stringify(deployedContract, null, 2);
+fs.writeFileSync(filename, deployedContractJson, {
+    flag: 'w',
+    encoding: 'utf8',
+});
+
+console.log(deployedContractJson);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+main()
+.then(() => process.exit(0))
+.catch(error => {
+    console.error(error);
+    process.exit(1);
 });
+
