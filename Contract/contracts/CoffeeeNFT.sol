@@ -70,4 +70,17 @@ contract CoffeeeNFT is ERC721 {
         }
         revert("NFT not found");
     }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner or approved"
+        );
+        _safeTransfer(from, to, tokenId, data);
+    }
 }
