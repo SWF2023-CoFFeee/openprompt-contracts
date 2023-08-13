@@ -6,6 +6,7 @@
   "scripts": {
     "hardhat": "hardhat",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "npx hardhat compile",
     "migrate": "npx hardhat run --network ganache ./scripts/deploy.ts"
   },
   "author": "",
